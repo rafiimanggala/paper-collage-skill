@@ -27,7 +27,7 @@ Needs Node 22+, ffmpeg, Python 3.9+, and the HyperFrames skills (`npx hyperframe
 
 1. **Storyboard table first**, one row per scene: setup phrase, document, prop, person and their emotion, punch word 1, punch word 2, doodle, paper colour.
 2. **Assets**: draw documents in code (`assets/lib/docs.css`), find CC0 photos and cut them into stickers. Read `reference/assets.md` before touching photos.
-3. **Edit only `scripts/scenes.py`** (helpers in `scripts/collage_html.py`), then `python3 scripts/build.py`. Never edit `compositions/*.html` or `index.html`; the build overwrites them.
+3. **Write the storyboard in `scripts/scenes.py`** (helpers in `scripts/collage_html.py`, new document styles in `assets/lib/docs.css`), then `python3 scripts/build.py`. Never edit `compositions/*.html` or `index.html`; the build overwrites them and deletes scene files that left the storyboard. Replace the three example scenes rather than adding to them, and delete the example stickers in `assets/cut/` and their `credits.md` entries once nothing uses them.
 4. **Check, snapshot, fix, render.** Look at the snapshots yourself and compare them with the look checklist below.
 
 ## The beat (per 6 s scene, scene-local seconds)
@@ -41,7 +41,7 @@ Needs Node 22+, ffmpeg, Python 3.9+, and the HyperFrames skills (`npx hyperframe
 | 1.35 | person sticker pops and rises | `sticker(src, ..., person=True)` |
 | 2.0 | doodle | `zzz`, `drops`, `flight`, `mark` |
 | 3.3 | punch word 2, below word 1 | `word("EXPENSIVE", ...)` |
-| dur - 0.9 | everything pops out together | scene `exit` |
+| dur - 0.9 | everything pops out together (the last scene holds to the end) | scene `exit` |
 | dur - 0.4 | next scene pushes up (0.4 s overlap) | automatic |
 
 With a voiceover, put each punch word on the start of its spoken word (`CONFIG["words"]`). `CONFIG["target_seconds"]` speeds the whole piece up to a length without cutting anything; the voiceover is time-stretched with pitch kept.
@@ -53,7 +53,7 @@ With a voiceover, put each punch word on the start of its spoken word (`CONFIG["
 - **Punch words stack**: word 2 appears under word 1 and both stay until the exit. Both strips are off-white paper, never coloured blocks.
 - **Paper, not noise**: the bundled `crumpled.png` (a real CC0 photo) multiplied over one flat pastel per scene, a new colour each scene. Ink `#1E1B18`, accent red `#D2402E`.
 - **Type**: Newsreader for setup phrases and documents, Gloock caps for punch words, Archivo Black only for stamps and captions.
-- **Everything slightly rotated**: strips about -4 to +4 degrees, documents up to 10, props up to 18.
+- **Tilted paper**: documents up to 10 degrees, props up to 18, stamps about -8; strips stay level or tilt at most 3 (`rot=`) so they read.
 - **Motion pops, never fades**: letters land from 1.8x, stickers overshoot, documents drop and settle. Leave the easing in `collage.js` alone.
 - Keep y 1100 to 1500 clear of important content if burned-in captions will sit there.
 
@@ -74,5 +74,8 @@ A scene can be a talking head instead of paper: add `"presenter": {"src": "asset
 | Draw-on doodle shows nothing mid-stroke | Do not use `pathLength="1"`; `mark()` measures real path lengths. |
 | Renders differ between runs or frames flicker | No `Math.random`, `Date`, CSS animations or transitions; use `Collage.rng(seed)` and `render(t)`. |
 | Contrast warning on a rotated document | Known false positive: the audit measures axis-aligned boxes, so text on a tilted band is compared with the page behind it. |
+| `text_occluded` error | Real when a sticker covers document text: move one of them. A tilted overlay on a sticker is a false positive; `stamp()` is exempt already, add `data-layout-allow-occlusion` to others. |
+| `container_overflow` info on `.cg-world` | Expected: the slow scene zoom grows the world past the frame. |
+| Stamp text runs off the frame | `stamp("OVER BUDGET", ..., size=44)`. |
 | Lint warns the file is long or not split | Build scenes through `scenes.py`; it writes one sub-composition per scene. |
 | `render` stops with "Low disk space" | HyperFrames needs 1 GB free. |

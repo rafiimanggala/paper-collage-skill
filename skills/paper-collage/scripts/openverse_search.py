@@ -1,10 +1,12 @@
 """Search Openverse for CC0 / public-domain photos (no API key). MIT License.
 
-  python3 openverse_search.py "woman stressed laptop"
+  python3 openverse_search.py "stressed woman"
   python3 openverse_search.py "alarm clock" --source rawpixel,stocksnap --json hits.json
 Prints index, source, size, licence, title, landing page and image URL. Keep the landing page
 and creator in assets/credits.md for every photo you use.
-Tips: rawpixel "editor_1024" URLs have no watermark; StockSnap serves full size via its site.
+Tips: use one or two words ("stressed woman", "alarm clock"); long queries often return nothing.
+The listed image URL (StockSnap 960w, rawpixel editor_1024, no watermark) is big enough for a 900 px
+sticker; StockSnap full size sits behind a bot check, so do not scrape it.
 """
 import argparse
 import json
@@ -35,6 +37,8 @@ def main():
         with open(a.json, "w") as f:
             json.dump(d, f, indent=1)
     print("results:", d.get("result_count"))
+    if not d.get("results"):
+        print("nothing found: try one or two words, or drop --source")
     for i, r in enumerate(d.get("results", [])):
         print(i, r["source"], r.get("width"), r.get("height"), r["license"], "|", (r.get("title") or "")[:48],
               "|", r.get("foreign_landing_url"), "|", r["url"])

@@ -24,7 +24,7 @@
 | Attribute | On | Meaning |
 |---|---|---|
 | `data-seed` | stage | torn edges and jitter |
-| `data-exit` | stage | everything pops out |
+| `data-exit` | stage | everything pops out (leave it off to hold to the end) |
 | `data-push="1"` | stage | slides up from the bottom at t 0 |
 | `data-pushout` | stage | slides up and away (next scene's start) |
 | `data-zoom` | stage | slow zoom amount, default 0.03 |

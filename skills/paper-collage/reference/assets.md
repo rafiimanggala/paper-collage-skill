@@ -5,12 +5,12 @@ Everything must be free to use in an ad: CC0 or public domain only. Record every
 ## 1. Find photos
 
 ```bash
-python3 "${CLAUDE_SKILL_DIR}/scripts/openverse_search.py" "woman stressed laptop" --source rawpixel,stocksnap
+python3 "${CLAUDE_SKILL_DIR}/scripts/openverse_search.py" "stressed woman" --source rawpixel,stocksnap
 ```
 
-- Search for the emotion, not the topic: "stressed", "tired holding head", "relieved", "celebrating", "confused". Topic photos (a wedding, a crash) are often busy or grim.
-- Prefer plain, light backgrounds and a subject that is not cropped by the frame edge; background removal and the die-cut both get cleaner.
-- rawpixel: use the `editor_1024` URL (the larger rendition is watermarked). StockSnap: full size comes from the photo page. Flickr results vary; check the licence field is `cc0` or `pdm`.
+- Search for the emotion, not the topic, in one or two words: "stressed woman", "tired man", "relieved", "celebrating", "confused". Longer queries often return nothing. Topic photos (a wedding, a crash) are often busy or grim.
+- Prefer plain, light backgrounds with background on every side of the subject. Where the subject touches the frame edge the sticker gets a straight side; that only looks right at the bottom, where `--cut-y` cuts anyway.
+- Download the image URL the search prints: StockSnap 960w and rawpixel `editor_1024` are big enough for a 900 px sticker and carry no watermark. The larger rawpixel rendition is watermarked and StockSnap full size sits behind a bot check, so skip both. Flickr results vary; check the licence field is `cc0` or `pdm`.
 - Avoid logos, readable brand names, and recognisable private people in sensitive situations.
 - Grim or graphic subjects (injuries, wrecks) read better as a toy, a diagram or a document than as a real photo.
 

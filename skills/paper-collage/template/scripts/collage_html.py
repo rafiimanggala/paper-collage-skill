@@ -60,14 +60,20 @@ def pop(inner, t, style, rot=None, anim=None, cls="", out=None):
     return f'<div class="cg-pop {cls}"{_common(t, rot, out, extra)} style="{style}">{inner}</div>'
 
 
-def stamp(text, t, style, rot=-8, out=None):
-    """Red rubber stamp ("NO.", "ACCEPT?")."""
-    return pop(f'<div class="stamp">{escape(text, quote=False)}</div>', t, style, rot, "stamp", "", out)
+def stamp(text, t, style, rot=-8, size=None, out=None):
+    """Red rubber stamp ("NO.", "OVER BUDGET"). size: font size in px (long text needs a smaller one).
+    Marked as an allowed overlap: the occlusion lint probes axis-aligned boxes, so a tilted stamp
+    over a sticker is reported as hidden text even when it reads fine."""
+    fs = f' style="font-size: {size}px"' if size else ""
+    return pop(f'<div class="stamp" data-layout-allow-occlusion{fs}>{escape(text, quote=False)}</div>',
+               t, style, rot, "stamp", "", out)
 
 
 def mark(t, dur, w, h, style, paths, out=None):
     """Hand-drawn marker strokes that draw on in order. paths: [(ink, d, stroke_width)],
-    ink is "ink-red" or "ink-dark" (or your own class with a stroke colour)."""
+    ink is "ink-red" or "ink-dark" (or your own class with a stroke colour).
+    Positioned in frame coordinates: it does not follow a document's drop and settle, so a circle
+    around a value on a document lands close, not exact. Draw it after the document has settled."""
     body = "".join(f'<path class="{ink}" d="{d}" stroke-width="{sw}" />' for ink, d, sw in paths)
     attrs = _common(t, None, out, ' data-dur="%s"' % dur)
     return (f'<svg class="cg-draw"{attrs} width="{w}" height="{h}" '

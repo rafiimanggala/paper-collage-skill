@@ -40,7 +40,7 @@ Drop from 900 px above with a slight overshoot in 0.42 s, rotating from -16 degr
 
 - The whole collage zooms in 3% over 6 s (`data-zoom`, 0 for talking heads).
 - Push: the next scene slides up from the bottom in 0.4 s (in-out cubic) while the old one moves up 520 px.
-- Everything in a scene leaves together at `exit`; nothing fades out on its own unless it has `out`.
+- Everything in a scene leaves together at `exit`; nothing fades out on its own unless it has `out`. The last scene holds to the end unless it sets an `exit`.
 
 ## Sound
 
