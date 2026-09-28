@@ -1,0 +1,52 @@
+/* paper-collage core styles. MIT License. Paper objects for your scenes go in docs.css. */
+@font-face { font-family: "Gloock"; src: url("assets/fonts/Gloock-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Newsreader"; src: url("assets/fonts/Newsreader.ttf") format("truetype"); font-weight: 200 800; font-style: normal; }
+@font-face { font-family: "Archivo Black"; src: url("assets/fonts/ArchivoBlack-Regular.ttf") format("truetype"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F4F2E5; }
+#root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #F4F2E5; }
+#root > .scene { position: absolute; inset: 0; }
+
+/* Stage: pastel paper with a faint grid and crumpled creases. */
+.cg-stage { position: absolute; inset: 0; overflow: hidden; background: var(--bg, #BEE5D2); }
+.cg-bg-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.38) 2px, transparent 2px), linear-gradient(90deg, rgba(255, 255, 255, 0.38) 2px, transparent 2px);
+  background-size: 120px 120px; background-position: 36px 44px;
+}
+.cg-bg-crumple { position: absolute; inset: 0; background: url("assets/tex/crumpled.png") 0 0 / 1080px 1920px no-repeat; mix-blend-mode: multiply; opacity: 0.78; }
+.cg-world { position: absolute; inset: 0; transform-origin: 50% 45%; }
+
+/* Talking head: a still or a video filling the frame. */
+.cg-presenter { position: absolute; inset: 0; transform-origin: 50% 53%; }
+.cg-presenter img, .cg-presenter video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+
+/* Torn paper strips. The shadow sits on the wrapper so the clipped paper keeps it. */
+.cg-strip { position: absolute; transform-origin: 0% 50%; white-space: nowrap; filter: drop-shadow(0 3px 3px rgba(40, 30, 20, 0.2)); }
+.cg-word, .cg-tag { width: max-content; }
+.cg-paper { position: absolute; inset: 0; background: #F6F3EC; }
+.cg-text { position: relative; color: #1E1B18; }
+.cg-label .cg-text { font-family: "Newsreader"; font-weight: 560; font-size: 88px; line-height: 1; padding: 18px 34px 28px; font-variation-settings: "opsz" 20; }
+.cg-word .cg-text { font-family: "Gloock"; font-weight: 400; font-size: 104px; line-height: 1; padding: 22px 34px 14px; letter-spacing: 0.01em; }
+.cg-tag .cg-text { font-family: "Gloock"; font-weight: 400; font-size: 58px; line-height: 1; padding: 16px 24px 10px; letter-spacing: 0.02em; }
+.cg-ch { display: inline-block; transform-origin: 50% 70%; }
+
+/* Paper objects, cutout stickers, marks, doodles. */
+.cg-doc { position: absolute; transform-origin: 50% 50%; filter: drop-shadow(0 10px 14px rgba(40, 30, 20, 0.22)); }
+.cg-prop, .cg-person { position: absolute; display: block; height: auto; transform-origin: 50% 60%; filter: drop-shadow(0 10px 12px rgba(40, 30, 20, 0.24)); }
+.cg-pop { position: absolute; transform-origin: 50% 50%; }
+.cg-draw { position: absolute; overflow: visible; }
+.cg-draw path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ink-red { stroke: #D2402E; }
+.ink-dark { stroke: #1E1B18; }
+.cg-doodle { position: absolute; }
+.cg-bit { position: absolute; display: block; transform-origin: 50% 50%; }
+.cg-z { font-family: "Newsreader"; font-style: normal; font-weight: 700; line-height: 1; color: #1E1B18; font-variation-settings: "opsz" 72; }
+
+/* Rubber stamp (use on a .cg-pop with data-anim="stamp"). */
+.stamp { padding: 10px 22px; border: 7px solid #D2402E; border-radius: 12px; color: #D2402E; font-family: "Archivo Black"; font-size: 64px; line-height: 1; letter-spacing: 0.04em; background: rgba(255, 253, 247, 0.55); }
+
+/* Burned-in captions (compositions/captions.html), kept in the lower band. */
+.cap-wrap { position: absolute; left: 40px; right: 40px; top: 1488px; text-align: center; }
+.cap { display: inline-block; font-family: "Archivo Black"; font-size: 60px; line-height: 1.08; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.01em; -webkit-text-stroke: 12px #111111; paint-order: stroke fill; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.35)); }

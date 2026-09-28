@@ -1,0 +1,5 @@
+renders/
+snapshots/
+assets/sfx/*.mp3
+assets/vo/*-x*.wav
+__pycache__/

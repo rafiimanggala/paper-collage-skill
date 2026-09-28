@@ -1,0 +1,12 @@
+{
+  "name": "paper-collage",
+  "description": "Paper collage video skill for Claude Code and HyperFrames",
+  "owner": { "name": "rafiimanggala", "url": "https://github.com/rafiimanggala" },
+  "plugins": [
+    {
+      "name": "paper-collage",
+      "source": "./",
+      "description": "DIY paper collage / scrapbook video scenes for HyperFrames"
+    }
+  ]
+}

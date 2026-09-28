@@ -1,0 +1,22 @@
+{
+  "name": "paper-collage",
+  "displayName": "Paper Collage",
+  "version": "1.0.0",
+  "description": "DIY paper collage / scrapbook video scenes for HyperFrames: torn paper labels that type on, die-cut photo stickers, crumpled grid paper, stop-motion pops.",
+  "author": {
+    "name": "rafiimanggala",
+    "url": "https://github.com/rafiimanggala"
+  },
+  "homepage": "https://github.com/rafiimanggala/paper-collage-skill",
+  "repository": "https://github.com/rafiimanggala/paper-collage-skill",
+  "license": "MIT",
+  "keywords": [
+    "hyperframes",
+    "video",
+    "collage",
+    "scrapbook",
+    "motion-graphics",
+    "ads",
+    "reels"
+  ]
+}

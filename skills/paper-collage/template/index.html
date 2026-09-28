@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Paper collage</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="assets/lib/collage.js"></script>
+    <style>
+/* paper-collage core styles. MIT License. Paper objects for your scenes go in docs.css. */
+@font-face { font-family: "Gloock"; src: url("assets/fonts/Gloock-Regular.ttf") format("truetype"); }
+@font-face { font-family: "Newsreader"; src: url("assets/fonts/Newsreader.ttf") format("truetype"); font-weight: 200 800; font-style: normal; }
+@font-face { font-family: "Archivo Black"; src: url("assets/fonts/ArchivoBlack-Regular.ttf") format("truetype"); }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #F4F2E5; }
+#root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #F4F2E5; }
+#root > .scene { position: absolute; inset: 0; }
+
+/* Stage: pastel paper with a faint grid and crumpled creases. */
+.cg-stage { position: absolute; inset: 0; overflow: hidden; background: var(--bg, #BEE5D2); }
+.cg-bg-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.38) 2px, transparent 2px), linear-gradient(90deg, rgba(255, 255, 255, 0.38) 2px, transparent 2px);
+  background-size: 120px 120px; background-position: 36px 44px;
+}
+.cg-bg-crumple { position: absolute; inset: 0; background: url("assets/tex/crumpled.png") 0 0 / 1080px 1920px no-repeat; mix-blend-mode: multiply; opacity: 0.78; }
+.cg-world { position: absolute; inset: 0; transform-origin: 50% 45%; }
+
+/* Talking head: a still or a video filling the frame. */
+.cg-presenter { position: absolute; inset: 0; transform-origin: 50% 53%; }
+.cg-presenter img, .cg-presenter video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+
+/* Torn paper strips. The shadow sits on the wrapper so the clipped paper keeps it. */
+.cg-strip { position: absolute; transform-origin: 0% 50%; white-space: nowrap; filter: drop-shadow(0 3px 3px rgba(40, 30, 20, 0.2)); }
+.cg-word, .cg-tag { width: max-content; }
+.cg-paper { position: absolute; inset: 0; background: #F6F3EC; }
+.cg-text { position: relative; color: #1E1B18; }
+.cg-label .cg-text { font-family: "Newsreader"; font-weight: 560; font-size: 88px; line-height: 1; padding: 18px 34px 28px; font-variation-settings: "opsz" 20; }
+.cg-word .cg-text { font-family: "Gloock"; font-weight: 400; font-size: 104px; line-height: 1; padding: 22px 34px 14px; letter-spacing: 0.01em; }
+.cg-tag .cg-text { font-family: "Gloock"; font-weight: 400; font-size: 58px; line-height: 1; padding: 16px 24px 10px; letter-spacing: 0.02em; }
+.cg-ch { display: inline-block; transform-origin: 50% 70%; }
+
+/* Paper objects, cutout stickers, marks, doodles. */
+.cg-doc { position: absolute; transform-origin: 50% 50%; filter: drop-shadow(0 10px 14px rgba(40, 30, 20, 0.22)); }
+.cg-prop, .cg-person { position: absolute; display: block; height: auto; transform-origin: 50% 60%; filter: drop-shadow(0 10px 12px rgba(40, 30, 20, 0.24)); }
+.cg-pop { position: absolute; transform-origin: 50% 50%; }
+.cg-draw { position: absolute; overflow: visible; }
+.cg-draw path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ink-red { stroke: #D2402E; }
+.ink-dark { stroke: #1E1B18; }
+.cg-doodle { position: absolute; }
+.cg-bit { position: absolute; display: block; transform-origin: 50% 50%; }
+.cg-z { font-family: "Newsreader"; font-style: normal; font-weight: 700; line-height: 1; color: #1E1B18; font-variation-settings: "opsz" 72; }
+
+/* Rubber stamp (use on a .cg-pop with data-anim="stamp"). */
+.stamp { padding: 10px 22px; border: 7px solid #D2402E; border-radius: 12px; color: #D2402E; font-family: "Archivo Black"; font-size: 64px; line-height: 1; letter-spacing: 0.04em; background: rgba(255, 253, 247, 0.55); }
+
+/* Burned-in captions (compositions/captions.html), kept in the lower band. */
+.cap-wrap { position: absolute; left: 40px; right: 40px; top: 1488px; text-align: center; }
+.cap { display: inline-block; font-family: "Archivo Black"; font-size: 60px; line-height: 1.08; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.01em; -webkit-text-stroke: 12px #111111; paint-order: stroke fill; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.35)); }
+
+/* Paper objects drawn in code for the example scenes. Copy one, rename the class, restyle it. */
+
+/* Doc 1: spiral notebook page, "Sleep Schedule". */
+.doc-sleep {
+  width: 400px; height: 520px; padding: 78px 30px 0 84px; background-color: #FFFDF7;
+  background-image: repeating-linear-gradient(to bottom, transparent 0 50px, rgba(70, 110, 200, 0.26) 50px 52px);
+  background-position: 0 206px; background-size: 100% 314px; background-repeat: no-repeat;
+}
+.doc-sleep::before { content: ""; position: absolute; left: 62px; top: 0; bottom: 0; width: 3px; background: rgba(214, 72, 72, 0.55); }
+.ds-holes { position: absolute; left: 30px; right: 30px; top: 20px; height: 24px; background: radial-gradient(circle, rgba(60, 50, 40, 0.28) 8px, transparent 9px) 0 0 / 49px 24px repeat-x; }
+.ds-title { font-family: "Newsreader"; font-weight: 600; font-size: 54px; line-height: 0.98; color: #1E1B18; margin-bottom: 30px; font-variation-settings: "opsz" 60; }
+.ds-row { display: flex; align-items: center; height: 52px; font-family: "Newsreader"; font-size: 27px; color: #1E1B18; }
+.ds-box { position: relative; flex: none; width: 24px; height: 24px; border: 3px solid #1E1B18; margin-right: 14px; }
+.ds-x::after { content: ""; position: absolute; left: 5px; top: -6px; width: 9px; height: 18px; border-right: 4px solid #C0392B; border-bottom: 4px solid #C0392B; transform: rotate(40deg); }
+.ds-time { font-weight: 700; margin-right: 10px; white-space: nowrap; }
+.ds-what { white-space: nowrap; }
+
+/* Doc 2: clipboard, "Workout Plan". */
+.doc-plan { width: 420px; height: 560px; padding: 64px 24px 24px; border-radius: 22px; background: #B7895C; box-shadow: inset 0 0 0 4px rgba(90, 60, 30, 0.35); }
+.dp-clip { position: absolute; left: 125px; top: -24px; width: 170px; height: 82px; border-radius: 14px; background: linear-gradient(180deg, #E9ECEF 0%, #AEB4BA 55%, #8A9097 100%); box-shadow: 0 4px 0 rgba(0, 0, 0, 0.18); }
+.dp-clip::after { content: ""; position: absolute; left: 55px; top: 14px; width: 60px; height: 22px; border-radius: 11px; background: #7B8189; }
+.dp-paper { height: 100%; padding: 30px 28px; background: #FFFEFA; }
+.dp-kicker { font-family: "Newsreader"; font-weight: 700; font-size: 20px; letter-spacing: 0.24em; color: #8A3B26; }
+.dp-title { font-family: "Newsreader"; font-weight: 650; font-size: 50px; line-height: 1.02; color: #1E1B18; margin: 6px 0 22px; font-variation-settings: "opsz" 60; }
+.dp-row { display: flex; align-items: center; height: 64px; border-top: 2px solid rgba(30, 27, 24, 0.14); font-family: "Newsreader"; font-size: 28px; color: #1E1B18; }
+.dp-day { width: 72px; font-weight: 700; }
+.dp-what { flex: 1; white-space: nowrap; }
+.dp-box { position: relative; flex: none; width: 26px; height: 26px; border: 3px solid #1E1B18; border-radius: 4px; }
+.dp-x::after { content: ""; position: absolute; left: 6px; top: -7px; width: 9px; height: 19px; border-right: 4px solid #C0392B; border-bottom: 4px solid #C0392B; transform: rotate(40deg); }
+
+/* Doc 3: boarding pass. */
+.doc-pass { display: flex; width: 520px; height: 250px; background: #FFFDF7; border-radius: 14px; }
+.dq-main { position: relative; flex: 1; padding: 0 0 0 0; }
+.dq-band { height: 56px; padding: 0 26px; border-radius: 14px 0 0 0; background: #24457F; color: #F6F3EC; font-family: "Newsreader"; font-weight: 700; font-size: 22px; line-height: 56px; letter-spacing: 0.22em; }
+.dq-route { display: flex; align-items: center; gap: 14px; padding: 16px 26px 6px; font-family: "Gloock"; font-size: 68px; line-height: 1; color: #1E1B18; }
+.dq-arrow { display: block; width: 52px; height: 24px; }
+.dq-fields { display: flex; gap: 28px; padding: 8px 26px 0; }
+.dq-field { font-family: "Newsreader"; color: #1E1B18; }
+.dq-k { display: block; font-size: 16px; font-weight: 700; letter-spacing: 0.18em; color: #5A534C; }
+.dq-v { display: block; font-size: 32px; font-weight: 700; line-height: 1.1; }
+.dq-stub { position: relative; width: 118px; border-left: 3px dashed rgba(30, 27, 24, 0.3); padding: 30px 22px; }
+.dq-stub::before, .dq-stub::after { content: ""; position: absolute; left: -17px; width: 30px; height: 30px; border-radius: 50%; background: var(--bg); }
+.dq-stub::before { top: -15px; }
+.dq-stub::after { bottom: -15px; }
+.cg-prop.pp { display: flex; flex-direction: column; align-items: center; width: 190px; height: 262px; padding: 30px 14px 0; border-radius: 10px 16px 16px 10px; background: #1F3A5F; box-shadow: inset 10px 0 0 rgba(0, 0, 0, 0.2); }
+.pp-title { font-family: "Newsreader"; font-weight: 700; font-size: 24px; letter-spacing: 0.2em; color: #E3C77A; }
+.pp-globe { display: block; width: 100px; height: 100px; margin: 30px 0 24px; }
+.pp-sub { font-family: "Newsreader"; font-weight: 700; font-size: 13px; letter-spacing: 0.18em; color: #E3C77A; white-space: nowrap; }
+.dq-code {
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(180deg, #1E1B18 0 4px, transparent 4px 7px, #1E1B18 7px 9px, transparent 9px 13px, #1E1B18 13px 19px, transparent 19px 22px, #1E1B18 22px 24px, transparent 24px 29px, #1E1B18 29px 32px, transparent 32px 36px);
+}
+
+/* Generic form: a titled sheet with labelled blank lines. */
+.sheet { background: #FFFDF7; color: #1E1B18; font-family: "Newsreader"; }
+.doc-form { width: 390px; height: 500px; padding: 30px 28px; border-top: 16px solid #2F6B55; }
+.doc-form .kick { font-weight: 700; font-size: 18px; letter-spacing: 0.22em; color: #8A3B26; }
+.doc-form .t { font-weight: 700; font-size: 40px; line-height: 1.02; font-variation-settings: "opsz" 48; margin: 6px 0 16px; }
+.field { display: flex; align-items: flex-end; gap: 10px; height: 46px; font-size: 20px; font-weight: 600; color: #3E3833; }
+.field span { white-space: nowrap; }
+.field i { flex: 1; height: 2px; margin-bottom: 8px; background: rgba(30, 27, 24, 0.35); }
+
+    </style>
+  </head>
+  <body>
+    <!-- Generated by scripts/build.py. Edit scripts/scenes.py, not this file. -->
+    <div id="root" data-composition-id="main" data-width="1080" data-height="1920" data-duration="17.2">
+      <div id="el-s1-sleep" class="scene" style="z-index: 1" data-composition-id="s1-sleep" data-composition-src="compositions/s1-sleep.html" data-start="0.0" data-duration="6.0" data-track-index="1"></div>
+      <div id="el-s2-gym" class="scene" style="z-index: 2" data-composition-id="s2-gym" data-composition-src="compositions/s2-gym.html" data-start="5.6" data-duration="6.0" data-track-index="2"></div>
+      <div id="el-s3-travel" class="scene" style="z-index: 3" data-composition-id="s3-travel" data-composition-src="compositions/s3-travel.html" data-start="11.2" data-duration="6.0" data-track-index="1"></div>
+      <audio id="sfx-000" src="assets/sfx/typing.mp3" data-start="0.38" data-duration="0.45" data-track-index="20" data-volume="0.26"></audio>
+      <audio id="sfx-001" src="assets/sfx/pop.mp3" data-start="0.73" data-duration="0.6" data-track-index="21" data-volume="0.34"></audio>
+      <audio id="sfx-002" src="assets/sfx/pop.mp3" data-start="0.9" data-duration="0.6" data-track-index="20" data-volume="0.26"></audio>
+      <audio id="sfx-003" src="assets/sfx/typing.mp3" data-start="1.08" data-duration="0.45" data-track-index="22" data-volume="0.26"></audio>
+      <audio id="sfx-004" src="assets/sfx/pop.mp3" data-start="1.35" data-duration="0.6" data-track-index="21" data-volume="0.34"></audio>
+      <audio id="sfx-005" src="assets/sfx/click-soft.mp3" data-start="2.0" data-duration="0.35" data-track-index="20" data-volume="0.3"></audio>
+      <audio id="sfx-006" src="assets/sfx/typing.mp3" data-start="3.38" data-duration="0.45" data-track-index="20" data-volume="0.26"></audio>
+      <audio id="sfx-007" src="assets/sfx/whoosh-short.mp3" data-start="5.6" data-duration="0.55" data-track-index="20" data-volume="0.28"></audio>
+      <audio id="sfx-008" src="assets/sfx/typing.mp3" data-start="6.13" data-duration="0.45" data-track-index="21" data-volume="0.26"></audio>
+      <audio id="sfx-009" src="assets/sfx/pop.mp3" data-start="6.47" data-duration="0.6" data-track-index="20" data-volume="0.34"></audio>
+      <audio id="sfx-010" src="assets/sfx/pop.mp3" data-start="6.65" data-duration="0.6" data-track-index="21" data-volume="0.26"></audio>
+      <audio id="sfx-011" src="assets/sfx/typing.mp3" data-start="6.93" data-duration="0.45" data-track-index="22" data-volume="0.26"></audio>
+      <audio id="sfx-012" src="assets/sfx/pop.mp3" data-start="7.2" data-duration="0.6" data-track-index="20" data-volume="0.34"></audio>
+      <audio id="sfx-013" src="assets/sfx/click-soft.mp3" data-start="7.8" data-duration="0.35" data-track-index="20" data-volume="0.3"></audio>
+      <audio id="sfx-014" src="assets/sfx/typing.mp3" data-start="9.18" data-duration="0.45" data-track-index="20" data-volume="0.26"></audio>
+      <audio id="sfx-015" src="assets/sfx/whoosh-short.mp3" data-start="11.2" data-duration="0.55" data-track-index="20" data-volume="0.28"></audio>
+      <audio id="sfx-016" src="assets/sfx/typing.mp3" data-start="11.73" data-duration="0.45" data-track-index="21" data-volume="0.26"></audio>
+      <audio id="sfx-017" src="assets/sfx/pop.mp3" data-start="12.07" data-duration="0.6" data-track-index="20" data-volume="0.34"></audio>
+      <audio id="sfx-018" src="assets/sfx/pop.mp3" data-start="12.25" data-duration="0.6" data-track-index="21" data-volume="0.26"></audio>
+      <audio id="sfx-019" src="assets/sfx/typing.mp3" data-start="12.53" data-duration="0.45" data-track-index="22" data-volume="0.26"></audio>
+      <audio id="sfx-020" src="assets/sfx/pop.mp3" data-start="12.8" data-duration="0.6" data-track-index="20" data-volume="0.34"></audio>
+      <audio id="sfx-021" src="assets/sfx/click-soft.mp3" data-start="13.1" data-duration="0.35" data-track-index="21" data-volume="0.3"></audio>
+      <audio id="sfx-022" src="assets/sfx/typing.mp3" data-start="14.78" data-duration="0.45" data-track-index="20" data-volume="0.26"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>
